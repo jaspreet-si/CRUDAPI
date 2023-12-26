@@ -5,7 +5,7 @@ from rest_framework.mixins import ListModelMixin,CreateModelMixin,RetrieveModelM
 
 
  
-# mwthod 1
+# method 1
 class studentCP(GenericAPIView,ListModelMixin,CreateModelMixin):
   queryset=student.objects.all()
   serializer_class=studentserializer
