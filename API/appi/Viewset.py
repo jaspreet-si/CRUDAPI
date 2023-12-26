@@ -10,10 +10,13 @@ from rest_framework import status
 class studentView(viewsets.ViewSet):
 
   def list(self,request):
-    stu=student.objects.all()
-    serializer=studentserializer(stu,many=True)
-    
-    return Response(serializer.data)
+    try:
+      stu=student.objects.all()
+      serializer=studentserializer(stu,many=True)
+      
+      return Response(serializer.data)
+    except student.DoesNotExist:
+      return Response(status=status.HTTP_204_NO_CONTENT)
   
   def create(self,request):
     serializers=studentserializer(data=request.data)
@@ -31,6 +34,8 @@ class studentView(viewsets.ViewSet):
         return Response(serializers.data)
       except student.DoesNotExist:
         return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+      return Response(status=status.HTTP_404_NOT_FOUND)
       
   def update(self,request,pk=None):
     id=pk
@@ -39,7 +44,7 @@ class studentView(viewsets.ViewSet):
 
     if serializers.is_valid():
       serializers.save()
-      return Response({"msg":"Update successfully"})
+      return Response({"msg":"UPDATED SUCCESSFULLY"})
     return Response(status=status.HTTP_304_NOT_MODIFIED)
   
   def partial_update(self,request,pk=None):
@@ -53,10 +58,19 @@ class studentView(viewsets.ViewSet):
     return Response(status=status.HTTP_304_NOT_MODIFIED)
   
   def delete(Self,request,pk=None):
+
     id=pk
-    stu=student.objects.get(id=id)
-    stu.delete()
-    return Response(status=status.HTTP_404_NOT_FOUND)
-      
+    if id is not None:
+      try:
+
+        stu=student.objects.get(id=id)
+        stu.delete()
+        return Response({'msg':'CONTENT DELETED SUCCESSFULLY'})
+      except student.DoesNotExist:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+      return Response(status=status.HTTP_404_NOT_FOUND)
+    
+          
 
       
